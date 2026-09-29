@@ -1,9 +1,8 @@
 import streamlit as st
 st.image("malibu1234.jpg")
 import mysql.connector
-from mysql.connector import Error
-from datetime import date, datetime
-from decimal import Decimal
+from mysql.connector import Error, IntegrityError
+from datetime import datetime, date
 import pandas as pd
 
 # ============================================================
@@ -11,50 +10,53 @@ import pandas as pd
 # ============================================================
 
 st.set_page_config(
-    page_title="Hotel Manager",
+    page_title="Khách sạn Malibu",
     page_icon="🏨",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # ============================================================
-# MYSQL AIVEN CONFIG
+# MYSQL AIVEN
 # ============================================================
 
 DB_USER = "avnadmin"
 DB_PASSWORD = "AVNS_TX2oBXmTGGjXba6p7j1"
 DB_HOST = "mysql-3a5ef2bc-binhquytoc.a.aivencloud.com"
 DB_PORT = 14483
-DB_NAME = "khách sạn malibu"
+DB_NAME = "Khách sạn Malibu"
 
-# Nếu Aiven yêu cầu SSL, để True.
-DB_SSL = True
+DB_SSL_CONFIG = {
+    "ssl_disabled": False,
+    "ssl_verify_cert": False,
+    "ssl_verify_identity": False,
+}
 
 
 # ============================================================
-# KẾT NỐI MYSQL
+# KẾT NỐI DATABASE
 # ============================================================
 
 def get_connection():
-    """
-    Tạo kết nối đến MySQL Aiven.
-    """
+    try:
+        connection = mysql.connector.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            database=DB_NAME,
+            connection_timeout=15,
+            autocommit=False,
+            **DB_SSL_CONFIG
+        )
 
-    config = {
-        "host": DB_HOST,
-        "port": DB_PORT,
-        "user": DB_USER,
-        "password": DB_PASSWORD,
-        "database": DB_NAME,
-        "connection_timeout": 15,
-        "autocommit": False,
-    }
+        if connection.is_connected():
+            return connection
 
-    if DB_SSL:
-        config["ssl_verify_cert"] = False
-        config["ssl_verify_identity"] = False
+    except Error as e:
+        st.error(f"Không thể kết nối MySQL: {e}")
 
-    return mysql.connector.connect(**config)
+    return None
 
 
 # ============================================================
