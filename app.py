@@ -25,7 +25,7 @@ DB_USER = "avnadmin"
 DB_PASSWORD = "AVNS_TX2oBXmTGGjXba6p7j1"
 DB_HOST = "mysql-3a5ef2bc-binhquytoc.a.aivencloud.com"
 DB_PORT = 14483
-DB_NAME = "hotel_mangement"
+DB_NAME = "khách sạn malibu"
 
 # Nếu Aiven yêu cầu SSL, để True.
 DB_SSL = True
